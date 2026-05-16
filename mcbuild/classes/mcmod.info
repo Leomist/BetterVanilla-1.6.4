@@ -1,0 +1,10 @@
+[
+{
+  "modid": "bettervanilla",
+  "name": "BetterVanilla",
+  "description": "BetterVanilla is a Minecraft mod which attempts to improve vanilla gameplay by changing existing mechanics and expanding upon existing content.",
+  "version": "1.1.1",
+  "mcversion": "1.7.10",
+  "authorList": ["Agadar"]
+}
+]
