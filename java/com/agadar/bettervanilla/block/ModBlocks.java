@@ -32,36 +32,61 @@ public class ModBlocks
 	{	
 		if (ModConfigurations.Cacti)
 		{
-			cactus = new BlockCactus2();
-			RegisterHelper.registerBlock(cactus);
+			try
+			{
+				cactus = new BlockCactus2();
+				RegisterHelper.registerBlock(cactus);
+			}
+			catch (Throwable t)
+			{
+				System.err.println("[BetterVanilla] Disabling Cacti module due to block init failure: " + t);
+				ModConfigurations.Cacti = false;
+			}
 		}
 		
 		if (ModConfigurations.ColoredBeds)
 		{
-			colored_bed = new BlockColoredBed();
-			RegisterHelper.registerBlock(colored_bed);
+			try
+			{
+				colored_bed = new BlockColoredBed();
+				RegisterHelper.registerBlock(colored_bed);
+			}
+			catch (Throwable t)
+			{
+				System.err.println("[BetterVanilla] Disabling ColoredBeds module due to block init failure: " + t);
+				ModConfigurations.ColoredBeds = false;
+			}
 		}
 		
 		if (ModConfigurations.CauldronsContent)
 		{
-			/** Instantiate the milk fluid and its block and register them. */
-			milk = new Fluid("milk");
-			FluidRegistry.registerFluid(milk);
-			milk_block = new BlockFluidMilk(milk, Material.water);
-			RegisterHelper.registerBlock(milk_block);
-			milk.setUnlocalizedName(milk_block.getUnlocalizedName());
-			
-			/** Instantiate the cauldrons and register them.  */
-			water_cauldron = new BlockWaterCauldron().setBlockName("water_cauldron_block");
-			lava_cauldron = new BlockLavaCauldron().setBlockName("lava_cauldron");
-			milk_cauldron = new BlockMilkCauldron().setBlockName("milk_cauldron");
-			RegisterHelper.registerBlock(water_cauldron);
-			RegisterHelper.registerBlock(lava_cauldron);
-			RegisterHelper.registerBlock(milk_cauldron);
-			
-			/** Set up the renderer for the cauldrons. */
-			renderWaterCauldron = new RenderWaterCauldron();
-			RenderingRegistry.registerBlockHandler(renderWaterCauldron);
+			try
+			{
+				/** Instantiate the milk fluid and its block and register them. */
+				milk = new Fluid("milk");
+				FluidRegistry.registerFluid(milk);
+				milk_block = new BlockFluidMilk(milk, Material.water);
+				RegisterHelper.registerBlock(milk_block);
+				milk.setUnlocalizedName(milk_block.getUnlocalizedName());
+				
+				/** Instantiate the cauldrons and register them.  */
+				water_cauldron = new BlockWaterCauldron().setBlockName("water_cauldron_block");
+				lava_cauldron = new BlockLavaCauldron().setBlockName("lava_cauldron");
+				milk_cauldron = new BlockMilkCauldron().setBlockName("milk_cauldron");
+				RegisterHelper.registerBlock(water_cauldron);
+				RegisterHelper.registerBlock(lava_cauldron);
+				RegisterHelper.registerBlock(milk_cauldron);
+				
+				/** Set up the renderer for the cauldrons. */
+				renderWaterCauldron = new RenderWaterCauldron();
+				RenderingRegistry.registerBlockHandler(renderWaterCauldron);
+			}
+			catch (Throwable t)
+			{
+				System.err.println("[BetterVanilla] Disabling CauldronsContent module due to block init failure: " + t);
+				ModConfigurations.CauldronsContent = false;
+				ModConfigurations.CauldronsWash = false;
+			}
 		}
 	}
 }

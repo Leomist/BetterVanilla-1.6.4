@@ -1,9 +1,10 @@
 package com.agadar.bettervanilla.help;
 
 import java.io.File;
-
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 /** Manages this mod's configuration options. */
 public class ModConfigurations 
@@ -46,126 +47,133 @@ public class ModConfigurations
 	/** Loads and stores the configuration options from the configuration file. */
 	public static void loadConfigurations(File file)
 	{
-		Configuration config = new Configuration(file);
-		config.load();
+		Properties props = new Properties();
 		
-		// Define the categories
-		String animals = "Animals";
-		String applesTweak = "Apples tweak";
-		String crafting = "Crafting";
-		String dropTweaks = "Drop tweaks";
-		String pots = "Potions & Cauldrons";
-		String misc = "Miscellaneous";
-		String mobFil = "Mob filter";
-		String moarArmor = "More armor";
-		String rotToLeath = "Rotten Flesh to Leather";
+		// Load existing properties file if it exists
+		if (file != null && file.exists()) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(file);
+				props.load(fis);
+			} catch (IOException e) {
+				// use defaults on error
+			} finally {
+				if (fis != null) {
+					try { fis.close(); } catch (IOException e) { /* ignore */ }
+				}
+			}
+		}
 		
-		// Load/create the configuration properties
-		Property apples = config.get(applesTweak, "Enabled", true);
-		Property applesRate = config.get(applesTweak, "Drop rate", 5);
-		Property boneMeal = config.get(misc, "Bonemeal tweak", true);
-		Property bookShelves = config.get(dropTweaks, "Bookshelves drop tweak", true);
-		Property cacti = config.get(misc, "Cacti placement tweak", true);
-		Property cauldronsWash = config.get(pots, "Washable wool and clay", true);
-		Property cauldronsContent = config.get(pots, "Lava and milk inside cauldrons", true);
-		Property cheaperHoppers = config.get(crafting, "Cheaper hoppers", true);
-		Property coloredBeds = config.get(misc, "Colored beds", true);
-		Property craftableClay = config.get(crafting, "Craftable clay", true);
-		Property craftableCobwebs = config.get(crafting, "Craftable cobwebs", true);
-		Property craftableEndstone = config.get(crafting, "Craftable endstone", true);
-		Property craftableFlint = config.get(crafting, "Craftable flint", true);
-		Property craftableGrass = config.get(crafting, "Craftable grass", true);
-		Property craftableRottenFlesh = config.get(crafting, "Craftable rotten flesh", true);
-		Property craftableSlimeBalls = config.get(crafting, "Craftable slimeballs", true);
-		Property dispensers = config.get(misc, "Dispenser overhaul", true);
-		Property doors = config.get(misc, "Stackable doors", true);
-		Property enderChests = config.get(dropTweaks, "Ender chest drop tweak", true);
-		Property horseArmor = config.get(crafting, "Craftable horse armor", true);
-		Property ice = config.get(dropTweaks, "Ice drop tweak", true);
-		Property mobFilter = config.get(mobFil, "Enabled", false);
-		Property mobFilterList = config.get(mobFil, "Filter list", new String[] { "Example1", "Example2", "Example3" });
-		Property moreArmor = config.get(moarArmor, "Enabled", true);
-		Property morePotions = config.get(pots, "More potions", true);
-		Property mossStone = config.get(crafting, "Craftable moss stone", true);
-		Property nametags = config.get(crafting, "Craftable nametags", true);
-		Property pluckableChickens = config.get(animals, "Pluckable chickens", true);
-		Property rottenFleshToLeather = config.get(rotToLeath, "Enabled", true);
-		Property hardLeatherRecipe = config.get(rotToLeath, "Hard leather recipe", true);
-		Property otherMeats = config.get(rotToLeath, "Other meats", true);
-		Property saddles = config.get(crafting, "Craftable saddles", true);
-		Property smeltableItems = config.get(crafting, "Smeltable Items", true);
+		// Read configuration values with defaults
+		Apples = parseBool(props.getProperty("Apples"), true);
+		ApplesRate = parseDouble(props.getProperty("ApplesRate"), 5.0) * 2;
+		BoneMeal = parseBool(props.getProperty("BoneMeal"), true);
+		BookShelves = parseBool(props.getProperty("BookShelves"), true);
+		Cacti = parseBool(props.getProperty("Cacti"), true);
+		CauldronsWash = parseBool(props.getProperty("CauldronsWash"), true);
+		CauldronsContent = parseBool(props.getProperty("CauldronsContent"), true);
+		CheaperHoppers = parseBool(props.getProperty("CheaperHoppers"), true);
+		ColoredBeds = parseBool(props.getProperty("ColoredBeds"), true);
+		CraftableClay = parseBool(props.getProperty("CraftableClay"), true);
+		CraftableCobwebs = parseBool(props.getProperty("CraftableCobwebs"), true);
+		CraftableEndstone = parseBool(props.getProperty("CraftableEndstone"), true);
+		CraftableFlint = parseBool(props.getProperty("CraftableFlint"), true);
+		CraftableGrass = parseBool(props.getProperty("CraftableGrass"), true);
+		CraftableRottenFlesh = parseBool(props.getProperty("CraftableRottenFlesh"), true);
+		CraftableSlimeBalls = parseBool(props.getProperty("CraftableSlimeBalls"), true);
+		Dispensers = parseBool(props.getProperty("Dispensers"), true);
+		Doors = parseBool(props.getProperty("Doors"), true);
+		EnderChests = parseBool(props.getProperty("EnderChests"), true);
+		HorseArmor = parseBool(props.getProperty("HorseArmor"), true);
+		Ice = parseBool(props.getProperty("Ice"), true);
+		MobFilter = parseBool(props.getProperty("MobFilter"), false);
+		MobFilterList = parseList(props.getProperty("MobFilterList"), new String[]{"Example1", "Example2", "Example3"});
+		MoreArmor = parseBool(props.getProperty("MoreArmor"), true);
+		MorePotions = parseBool(props.getProperty("MorePotions"), true);
+		MossStone = parseBool(props.getProperty("MossStone"), true);
+		Nametags = parseBool(props.getProperty("Nametags"), true);
+		PluckableChickens = parseBool(props.getProperty("PluckableChickens"), true);
+		RottenFleshToLeather = parseBool(props.getProperty("RottenFleshToLeather"), true);
+		HardLeatherRecipe = parseBool(props.getProperty("HardLeatherRecipe"), true);
+		OtherMeats = parseBool(props.getProperty("OtherMeats"), true);
+		Saddles = parseBool(props.getProperty("Saddles"), true);
+		SmeltableItems = parseBool(props.getProperty("SmeltableItems"), true);
 		
-		// Set the comments of the configuration properties
-		apples.comment = "Set to 'true' to alter the drop rate of apples.";
-		applesRate.comment = "The new drop rate of apples. Vanilla default is 0.5%. BetterVanilla default is 5%.";
-		boneMeal.comment = "Set to 'true' to allow bonemeal to be used on cacti, sugar canes, and nether warts.";
-		bookShelves.comment = "Set to 'true' to make bookshelves drop a book shelf upon destruction instead of books.";
-		cacti.comment = "Set to 'true' to allow cacti to be placed beside solid blocks without breaking.";
-		cauldronsWash.comment = "Set to 'true' to allow players to wash away the dye from dyed wool and clay using a cauldron.";
-		cauldronsContent.comment = "Set to 'true' to allow lava and milk to be placed within cauldrons.";
-		cheaperHoppers.comment = "Set to 'true' to replace the vanilla hopper recipe with a cheaper and more sensible one.";
-		coloredBeds.comment = "Set to 'true' to allow the crafting of colored beds (adds 15 new beds to the game, each with a different wool color).";
-		craftableClay.comment = "Set to 'true' to allow the crafting of clay.";
-		craftableCobwebs.comment = "Set to 'true' to allow the crafting of cobwebs.";
-		craftableEndstone.comment = "Set to 'true' to allow the crafting of endstone.";
-		craftableFlint.comment = "Set to 'true' to allow the crafting of flint.";
-		craftableGrass.comment = "Set to 'true' to allow the crafting of grass blocks and mycelium.";
-		craftableRottenFlesh.comment = "Set to 'true' to allow the crafting of rotten flesh.";
-		craftableSlimeBalls.comment = "Set to 'true' to allow the crafting of slimeballs. Requires the harder variant of the Rotten Flesh to Leather recipe to be enabled, as this recipe uses Fleshy Hide.";		
-		dispensers.comment = "Set to 'true' to make dispensers place blocks, plant seeds, and use hoes and shears instead of dropping them as items.";
-		doors.comment = "Set to 'true' to increase the maximum stack size of doors from 1 to 16.";	
-		enderChests.comment = "Set to 'true' to make ender chests drop an ender chest upon destruction instead of obsidian blocks.";
-		horseArmor.comment = "Set to 'true' to allow the crafting of horse armors.";		
-		ice.comment = "Set to 'true' to make ice blocks drop an ice block upon destruction instead of creating a water source when in a snowy biome.";		
-		mobFilter.comment = "Set to 'true' to prevent the mobs of which the names are entered into the mob filter list from spawning naturally.";
-		mobFilterList.comment = "Insert into this list the names of mobs you wish to stop from spawning naturally. "
-				+ "Invalid or wrongly-typed mob names are ignored";
-		moreArmor.comment = "Set to 'true' to allow the crafting of several new armor types. All new armor types have the same stats as leather armor.";
-		morePotions.comment = "Set to 'true' to introduce Milk Bottles, Lava Bottles, and Potions of Ender into the game. Requires Agadar's Brewing-API!";
-		mossStone.comment = "Set to 'true' to allow the crafting of moss stone, cracked stone bricks, mossy stone bricks, and chiseled stone bricks.";
-		nametags.comment = "Set to 'true' to allow the crafting of nametags.";
-		pluckableChickens.comment = "Set to 'true' to allow players to pluck chickens using shears.";
-		rottenFleshToLeather.comment = "Set to 'true' to allow rotten flesh to be smelted into leather or crafted into Fleshy Hides, depending on other settings.";
-		hardLeatherRecipe.comment = "Set to 'true' to disable directly smelting rotten flesh into leather, instead introducing an intermediate product (Fleshy Hide).";
-		otherMeats.comment = "Set to 'true' to allow other meats to be crafted into Fleshy Hides as well.";
-		saddles.comment = "Set to 'true' to allow the crafting of saddles.";
-		smeltableItems.comment = "Set to 'true' to allow most iron and golden items to be smelted back into ingots.";
+		// Save configuration back (creates file with defaults if not present)
+		if (file != null) {
+			props.setProperty("Apples", String.valueOf(Apples));
+			props.setProperty("ApplesRate", String.valueOf(ApplesRate / 2.0));
+			props.setProperty("BoneMeal", String.valueOf(BoneMeal));
+			props.setProperty("BookShelves", String.valueOf(BookShelves));
+			props.setProperty("Cacti", String.valueOf(Cacti));
+			props.setProperty("CauldronsWash", String.valueOf(CauldronsWash));
+			props.setProperty("CauldronsContent", String.valueOf(CauldronsContent));
+			props.setProperty("CheaperHoppers", String.valueOf(CheaperHoppers));
+			props.setProperty("ColoredBeds", String.valueOf(ColoredBeds));
+			props.setProperty("CraftableClay", String.valueOf(CraftableClay));
+			props.setProperty("CraftableCobwebs", String.valueOf(CraftableCobwebs));
+			props.setProperty("CraftableEndstone", String.valueOf(CraftableEndstone));
+			props.setProperty("CraftableFlint", String.valueOf(CraftableFlint));
+			props.setProperty("CraftableGrass", String.valueOf(CraftableGrass));
+			props.setProperty("CraftableRottenFlesh", String.valueOf(CraftableRottenFlesh));
+			props.setProperty("CraftableSlimeBalls", String.valueOf(CraftableSlimeBalls));
+			props.setProperty("Dispensers", String.valueOf(Dispensers));
+			props.setProperty("Doors", String.valueOf(Doors));
+			props.setProperty("EnderChests", String.valueOf(EnderChests));
+			props.setProperty("HorseArmor", String.valueOf(HorseArmor));
+			props.setProperty("Ice", String.valueOf(Ice));
+			props.setProperty("MobFilter", String.valueOf(MobFilter));
+			props.setProperty("MobFilterList", joinList(MobFilterList));
+			props.setProperty("MoreArmor", String.valueOf(MoreArmor));
+			props.setProperty("MorePotions", String.valueOf(MorePotions));
+			props.setProperty("MossStone", String.valueOf(MossStone));
+			props.setProperty("Nametags", String.valueOf(Nametags));
+			props.setProperty("PluckableChickens", String.valueOf(PluckableChickens));
+			props.setProperty("RottenFleshToLeather", String.valueOf(RottenFleshToLeather));
+			props.setProperty("HardLeatherRecipe", String.valueOf(HardLeatherRecipe));
+			props.setProperty("OtherMeats", String.valueOf(OtherMeats));
+			props.setProperty("Saddles", String.valueOf(Saddles));
+			props.setProperty("SmeltableItems", String.valueOf(SmeltableItems));
+			FileOutputStream fos = null;
+			try {
+				fos = new FileOutputStream(file);
+				props.store(fos, "BetterVanilla Configuration");
+			} catch (IOException e) {
+				// ignore save failure
+			} finally {
+				if (fos != null) {
+					try { fos.close(); } catch (IOException e) { /* ignore */ }
+				}
+			}
+		}
+	}
 	
-		// Retrieve the values of the configuration properties
-		Apples = apples.getBoolean(true);
-		ApplesRate = applesRate.getDouble(5) * 2;
-		BoneMeal = boneMeal.getBoolean(true);
-		BookShelves = bookShelves.getBoolean(true);
-		Cacti = cacti.getBoolean(true);
-		CauldronsWash = cauldronsWash.getBoolean(true);
-		CauldronsContent = cauldronsContent.getBoolean(true);
-		CheaperHoppers = cheaperHoppers.getBoolean(true);
-		ColoredBeds = coloredBeds.getBoolean(true);
-		CraftableClay = craftableClay.getBoolean(true);
-		CraftableCobwebs = craftableCobwebs.getBoolean(true);
-		CraftableEndstone = craftableEndstone.getBoolean(true);
-		CraftableFlint = craftableFlint.getBoolean(true);
-		CraftableGrass = craftableGrass.getBoolean(true);
-		CraftableRottenFlesh = craftableRottenFlesh.getBoolean(true);
-		CraftableSlimeBalls = craftableSlimeBalls.getBoolean(true);
-		Dispensers = dispensers.getBoolean(true);
-		Doors = doors.getBoolean(true);
-		EnderChests = enderChests.getBoolean(true);
-		HorseArmor = horseArmor.getBoolean(true);
-		Ice = ice.getBoolean(true);
-		MobFilter = mobFilter.getBoolean(false);
-		MobFilterList = mobFilterList.getStringList();
-		MoreArmor = moreArmor.getBoolean(true);
-		MorePotions = morePotions.getBoolean(true);
-		MossStone = mossStone.getBoolean(true);
-		Nametags = nametags.getBoolean(true);
-		PluckableChickens = pluckableChickens.getBoolean(true);
-		RottenFleshToLeather = rottenFleshToLeather.getBoolean(true);
-		HardLeatherRecipe = hardLeatherRecipe.getBoolean(true);
-		OtherMeats = otherMeats.getBoolean(true);
-		Saddles = saddles.getBoolean(true);
-		SmeltableItems = smeltableItems.getBoolean(true);
-		
-		config.save();
+	private static boolean parseBool(String value, boolean defaultValue) {
+		if (value == null) return defaultValue;
+		return Boolean.parseBoolean(value.trim());
+	}
+	
+	private static double parseDouble(String value, double defaultValue) {
+		if (value == null) return defaultValue;
+		try {
+			return Double.parseDouble(value.trim());
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
+	
+	private static String[] parseList(String value, String[] defaultValue) {
+		if (value == null || value.trim().isEmpty()) return defaultValue;
+		return value.split(",");
+	}
+	
+	private static String joinList(String[] list) {
+		if (list == null || list.length == 0) return "";
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < list.length; i++) {
+			if (i > 0) sb.append(",");
+			sb.append(list[i]);
+		}
+		return sb.toString();
 	}
 }

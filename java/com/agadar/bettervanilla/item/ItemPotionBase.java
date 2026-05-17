@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.IIcon;
 
-public class ItemPotionBase extends ItemPotion 
+public class ItemPotionBase extends Item 
 {
 	@SideOnly(Side.CLIENT)
     private IIcon fireOverlayIcon;
@@ -80,29 +80,6 @@ public class ItemPotionBase extends ItemPotion
 	@Override
 	public IIcon getIcon(ItemStack par1ItemStack, int par2Pass)
 	{
-		if (par2Pass == 0)
-		{
-			List<PotionEffect> effects = this.getEffects(par1ItemStack);
-			
-			if (effects.size() > 0)
-			{
-				int potionId = effects.get(0).getPotionID();
-				
-				if (potionId == ModPotions.fire.id)
-				{
-					return this.fireOverlayIcon;
-				}
-				else if (potionId == ModPotions.cure.id)
-				{
-					return this.milkOverlayIcon;
-				}
-				else if (potionId == ModPotions.ender.id)
-				{
-					return this.enderOverlayIcon;
-				}
-			}
-		}
-		
 		return super.getIcon(par1ItemStack, par2Pass);
 	}
 	

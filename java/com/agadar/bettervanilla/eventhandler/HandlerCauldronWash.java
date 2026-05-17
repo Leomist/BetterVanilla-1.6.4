@@ -23,6 +23,7 @@ public class HandlerCauldronWash
 	@SubscribeEvent
 	public void onPlayerInteract(PlayerInteractEvent event) 
 	{
+		if (event.entityPlayer == null) return;
 		World world = event.entityPlayer.worldObj;
 		MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(world, event.entityPlayer, true);
 
