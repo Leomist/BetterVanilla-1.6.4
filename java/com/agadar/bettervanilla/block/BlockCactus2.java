@@ -10,11 +10,48 @@ import net.minecraft.world.World;
 public class BlockCactus2 extends Block {
 
 	public BlockCactus2() {
-		super(Material.cactus);
+		super(resolveCactusMaterial());
 		this.setHardness(0.4F);
 		this.setStepSound(Block.soundTypeCloth);
 		this.setBlockName("cactus2");
 		this.setBlockTextureName("cactus");
+	}
+
+	private static Material resolveCactusMaterial()
+	{
+		String[] names = new String[] {"cactus", "field_151572_C", "plants", "field_151585_k"};
+		
+		for (String name : names)
+		{
+			try
+			{
+				Object value = Material.class.getField(name).get(null);
+				if (value instanceof Material)
+				{
+					return (Material)value;
+				}
+			}
+			catch (Throwable ignored)
+			{
+			}
+		}
+		
+		for (java.lang.reflect.Field field : Material.class.getFields())
+		{
+			try
+			{
+				Object value = field.get(null);
+				if (value instanceof Material)
+				{
+					return (Material)value;
+				}
+			}
+			catch (Throwable ignored)
+			{
+			}
+		}
+		
+		throw new RuntimeException("Could not resolve cactus material");
 	}
 
 	@Override
